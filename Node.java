@@ -25,52 +25,49 @@ class BST {
 
    
 
-    void insert(int key){
-        Node start = root;
+    public void insert(int key){
+        insert(key, root);
+        
+    }
+
+    private void insert(int key, Node start){
         if(start == null)
             root = new Node(key);
         else if(key < root.key){
-            if(start.left == null){
+            if(start.left == null)
                 start.left = new Node(key);
-            }
-            else {
-                start = start.left;
-
-                insert(key);
-            }
+            else 
+                insert(key, start.left);
         }
         else if(key > start.key){
-            if(start.right == null){
+            if(start.right == null)
                 start.right = new Node(key);
-            }
-            else {
-                start = start.right;
-                insert(key);
-            }
+            else 
+                insert(key, start.right);
         }
     }
 
-    boolean search(int key){
-        Node start = root;
+    public boolean search(int key){
+        return search(key, root);  
+    }
+
+    private boolean search(int key, Node start){
         if(start.key == key)
             return true;
         else if(key < root.key){
             if(root.left == null)
                 return false;
-            else{
-                start = root.left;
-                return search(key);
-            }
+            else
+                return search(key, start.left);
         }
-        else if(key > start.key){
+        else{
             if(root.right == null)
                 return false;
-            else{
-                start = root.right;
-                return search(key);
-            }
+            else
+                return search(key, start.right);
         }
     }
+
 
     void remove(int key){
 
@@ -78,6 +75,10 @@ class BST {
 
     public String toString(){
        ArrayList<ArrayList<Integer>> map = new ArrayList();
-        Node start = root;
-
+       int height = 90;
+       for (int i = 0; i < height; i++) {
+        ArrayList<Integer> mapArray = new ArrayList();
+        map.add(mapArray);
+       }
+       return "";
     }
