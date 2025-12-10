@@ -8,9 +8,5 @@ public class Node{
         key = item;
         left = right = null;
     }
-    
-    public static void main (String[] args) {
-      System.out.println("Abababa");
-   }
 }
 
