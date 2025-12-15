@@ -35,6 +35,11 @@ public class Main{
 
       tree.remove(20);
 
-      System.out.println(System.lineSeparator() + tree.toString());
+      System.out.println(System.lineSeparator() + tree.toString() + System.lineSeparator() + "Finding BF of 15..." + System.lineSeparator());
+
+      System.out.println(tree.getBalanceFactor(tree.findNode(15, tree.getRoot())));
+
+      System.out.println(System.lineSeparator() + tree.toString() + System.lineSeparator() + "Rotating right" + System.lineSeparator());
+      tree.rotateRight(tree.findNode(15, tree.getRoot()), tree.findNode(20, tree.getRoot()));
    }
 }
