@@ -24,21 +24,30 @@ class BST {
    }
 
     public void insert(int key){
+         if(root == null){
+            root = new Node(key);
+            return;
+        }
+         else{
         insert(key, root);
+         }
     }
 
     private void insert(int key, Node start){
-        if(start == null)
-            root = new Node(key);
-        else if(key < root.key){
-            if(start.left == null)
+       
+        if(key < start.key){
+            if(start.left == null){
                 start.left = new Node(key);
+                return;
+            }
             else 
                 insert(key, start.left);
         }
         else if(key > start.key){
-            if(start.right == null)
+            if(start.right == null){
                 start.right = new Node(key);
+                return;
+            }
             else 
                 insert(key, start.right);
         }
@@ -165,4 +174,89 @@ class BST {
         node1.left = node2.right;
         node2.right = node1;
     }
+
+
+    //Add the following functions to your BST
+ //Please use this code to verify your tree integrity
+    public boolean isBSTOrNot() {
+        return isBSTOrNot(this.root, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
+    private boolean isBSTOrNot(Node root, int minValue, int maxValue) {
+        // check for root is not null or not
+        if (root == null) {
+            return true;
+        }
+        // check for current node value with left node value and right node value and recursively check for left sub tree and right sub tree
+        if(root.key >= minValue && root.key <= maxValue && isBSTOrNot(root.left, minValue, root.key) && isBSTOrNot(root.right, root.key, maxValue)){
+            return true;
+        }
+        return false;
+    }
+
+ 
+
+   // please use the following pieces of code to display your tree in a more easy to follow style (Note* you'll need to place the Trunk class in it's own file)
+    public static void showTrunks(Trunk p)
+    {
+        if (p == null) {
+            return;
+        }
+ 
+        showTrunks(p.prev);
+        System.out.print(p.str);
+    }
+ 
+    public void printTree(){
+        printTree(root, null, false);
+    }
+
+    private void printTree(Node root, Trunk prev, boolean isLeft)
+    {
+        if (root == null) {
+            return;
+        }
+ 
+        String prev_str = "    ";
+        Trunk trunk = new Trunk(prev, prev_str);
+ 
+        printTree(root.right, trunk, true);
+ 
+        if (prev == null) {
+            trunk.str = "———";
+        }
+        else if (isLeft) {
+            trunk.str = ".———";
+            prev_str = "   |";
+        }
+        else {
+            trunk.str = "`———";
+            prev.str = prev_str;
+        }
+ 
+        showTrunks(trunk);
+        System.out.println(" " + root.key);
+ 
+        if (prev != null) {
+            prev.str = prev_str;
+        }
+        trunk.str = "   |";
+ 
+        printTree(root.left, trunk, false);
+    }
+
+//this goes into it's own file
+    class Trunk
+   {
+    Trunk prev;
+    String str;
+ 
+    Trunk(Trunk prev, String str)
+    {
+        this.prev = prev;
+        this.str = str;
+    }
+   };
+ 
+
 }

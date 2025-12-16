@@ -14,6 +14,7 @@ public class Main{
       tree.insert(10);
       tree.insert(17);
       tree.insert(30);
+      tree.printTree();
 
       System.out.println(tree.toString() + System.lineSeparator() + "Searching for 9...");
       if(tree.search(9))
@@ -40,7 +41,7 @@ public class Main{
       System.out.println(tree.getBalanceFactor(tree.findNode(15, tree.getRoot())));
 
       System.out.println(System.lineSeparator() + tree.toString() + System.lineSeparator() + "Rotating right from 15 and 20..." + System.lineSeparator());
-      tree.rotateRight(tree.findNode(15, tree.getRoot()), tree.findNode(20, tree.getRoot()));
+    //  tree.rotateRight(tree.findNode(15, tree.getRoot()), tree.findNode(20, tree.getRoot()));
       System.out.println(tree.toString());
    }
 }
