@@ -39,7 +39,8 @@ public class Main{
 
       System.out.println(tree.getBalanceFactor(tree.findNode(15, tree.getRoot())));
 
-      System.out.println(System.lineSeparator() + tree.toString() + System.lineSeparator() + "Rotating right" + System.lineSeparator());
+      System.out.println(System.lineSeparator() + tree.toString() + System.lineSeparator() + "Rotating right from 15 and 20..." + System.lineSeparator());
       tree.rotateRight(tree.findNode(15, tree.getRoot()), tree.findNode(20, tree.getRoot()));
+      System.out.println(tree.toString());
    }
 }
