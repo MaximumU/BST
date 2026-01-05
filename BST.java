@@ -34,7 +34,12 @@ class BST {
     }
 
     private void insert(int key, Node start){
-       
+        if(getBalanceFactor(start)>1){
+            rotateRight(findParent(start),start);
+        }
+        else if(getBalanceFactor(start)>1){
+            rotateLeft(findParent(start),start);
+        }
         if(key < start.key){
             if(start.left == null){
                 start.left = new Node(key);
@@ -173,6 +178,20 @@ class BST {
         }
         node1.left = node2.right;
         node2.right = node1;
+    }
+
+    public void rotateLeft(Node node1, Node node2){
+        if(node1 == root)
+            root = node2;
+        else{
+            Node parent = findParent(node1);
+            if(parent.left == node1)
+                parent.left = node2;
+            else
+                parent.right = node2;
+        }
+        node1.right = node2.left;
+        node2.left = node1;
     }
 
 
