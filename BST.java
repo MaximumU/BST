@@ -2,7 +2,6 @@ import java.util.*;
 
 class BST {
     private Node root;
-    private boolean rightChild;
     
     public BST()
     {
@@ -24,38 +23,49 @@ class BST {
    }
 
     public void insert(int key){
-         if(root == null){
-            root = new Node(key);
-            return;
-        }
-         else{
-        insert(key, root);
-         }
+        root = insert(key, root);
     }
 
-    private void insert(int key, Node start){
-        if(getBalanceFactor(start)>1){
-            rotateRight(findParent(start),start);
+    private Node insert(int key, Node node){
+        // Standard BST insertion
+        if(node == null){
+            return new Node(key);
         }
-        else if(getBalanceFactor(start)>1){
-            rotateLeft(findParent(start),start);
+        
+        if(key < node.key){
+            node.left = insert(key, node.left);
         }
-        if(key < start.key){
-            if(start.left == null){
-                start.left = new Node(key);
-                return;
+        else if(key > node.key){
+            node.right = insert(key, node.right);
+        }
+        else{
+            return node; // Duplicate keys not allowed
+        }
+        
+        // Get balance factor and perform rotations
+        int balanceFactor = getBalanceFactor(node);
+        
+        // Left heavy cases
+        if(balanceFactor > 1){
+            // Left-Right case
+            if(key > node.left.key){
+                node.left = rotateLeft(node.left);
             }
-            else 
-                insert(key, start.left);
+            // Left-Left case
+            node = rotateRight(node);
         }
-        else if(key > start.key){
-            if(start.right == null){
-                start.right = new Node(key);
-                return;
+        
+        // Right heavy cases
+        if(balanceFactor < -1){
+            // Right-Left case
+            if(key < node.right.key){
+                node.right = rotateRight(node.right);
             }
-            else 
-                insert(key, start.right);
+            // Right-Right case
+            node = rotateLeft(node);
         }
+        
+        return node;
     }
 
     public boolean search(int key){
@@ -67,68 +77,91 @@ class BST {
             return false;
         if(start.key == key)
             return true;
-        else if(key < root.key){
-            if(root.left == null)
-                return false;
-            else
-                return search(key, start.left);
+        else if(key < start.key){
+            return search(key, start.left);
         }
         else{
-            if(root.right == null)
-                return false;
-            else
-                return search(key, start.right);
+            return search(key, start.right);
         }
     }
 
-
     public void remove(int key){
-        Node rem = findNode(key, root);
-        if(rightChild)
-            findParent(rem).right = findReplacement(rem);
-        else
-            findParent(rem).left = findReplacement(rem);
+        root = remove(key, root);
+    }
+
+    private Node remove(int key, Node node){
+        if(node == null){
+            return null;
+        }
+        
+        if(key < node.key){
+            node.left = remove(key, node.left);
+        }
+        else if(key > node.key){
+            node.right = remove(key, node.right);
+        }
+        else{
+            // Node found - handle deletion
+            // Case 1: No children (leaf node)
+            if(node.left == null && node.right == null){
+                return null;
+            }
+            // Case 2: One child
+            if(node.left == null){
+                return node.right;
+            }
+            if(node.right == null){
+                return node.left;
+            }
+            // Case 3: Two children
+            Node successor = findMin(node.right);
+            node.key = successor.key;
+            node.right = remove(successor.key, node.right);
+        }
+        
+        if(node == null){
+            return null;
+        }
+        
+        int balanceFactor = getBalanceFactor(node);
+        
+        // Left heavy case
+        if(balanceFactor > 1){
+            if(getBalanceFactor(node.left) < 0){
+                node.left = rotateLeft(node.left);
+            }
+            node = rotateRight(node);
+        }
+        
+        // Right heavy case
+        if(balanceFactor < -1){
+            if(getBalanceFactor(node.right) > 0){
+                node.right = rotateRight(node.right);
+            }
+            node = rotateLeft(node);
+        }
+        
+        return node;
+    }
+
+    private Node findMin(Node node){
+        while(node.left != null){
+            node = node.left;
+        }
+        return node;
     }
 
     public Node findNode(int key, Node start){
+        if(start == null)
+            return null;
         if(start.key == key)
             return start;
-        else if(key < root.key){
-            if(root.left != null)
-                return findNode(key, start.left);
+        else if(key < start.key){
+            return findNode(key, start.left);
         }
         else{
-            if(root.right != null)
-                return findNode(key, start.right);
+            return findNode(key, start.right);
         }
-        return null;
-    }
-
-    private Node findParent(Node start){
-        if(start == root)
-            return null;
-        Node current = root;
-        Node parent = null;
-        while(current != null && current != start){
-            parent = current;
-            if(start.key < current.key){
-                current = current.left;
-                rightChild = false;
-            }
-            else{
-                current = current.right;
-                rightChild = true;
-            }
-        }
-        return parent;
-    }
-
-    private Node findReplacement(Node start){
-        Node current = start.right;
-        while(current.left != null){
-            current = current.left;
-        }
-        return current;
     }
 
     @Override
@@ -136,12 +169,12 @@ class BST {
         String fin = "";
        ArrayList<ArrayList<Integer>> map = new ArrayList();
        int height = height(root);
-       for (int i = 0; i < height; i++) {
+       for (int i = 0; i <= height; i++) {
         ArrayList<Integer> mapArray = new ArrayList();
         map.add(mapArray);
        }
        toString(0, root, map);
-       for (int i = 0; i < height; i ++){
+       for (int i = 0; i <= height; i ++){
         for (int j = 0; j < map.get(i).size(); j++){
             fin = fin + map.get(i).get(j) + ", ";
         }
@@ -162,36 +195,24 @@ class BST {
         }
     }
 
-    public int getBalanceFactor(Node start){
-        return height(start.left) - height(start.right);
+    public int getBalanceFactor(Node node){
+        if(node == null)
+            return 0;
+        return height(node.left) - height(node.right);
     }
 
-    public void rotateRight(Node node1, Node node2){
-        if(node1 == root)
-            root = node2;
-        else{
-            Node parent = findParent(node1);
-            if(parent.left == node1)
-                parent.left = node2;
-            else
-                parent.right = node2;
-        }
-        node1.left = node2.right;
-        node2.right = node1;
+    private Node rotateRight(Node node){
+        Node temp = node.left;
+        node.left = temp.right;
+        temp.right = node;
+        return temp;
     }
 
-    public void rotateLeft(Node node1, Node node2){
-        if(node1 == root)
-            root = node2;
-        else{
-            Node parent = findParent(node1);
-            if(parent.left == node1)
-                parent.left = node2;
-            else
-                parent.right = node2;
-        }
-        node1.right = node2.left;
-        node2.left = node1;
+    private Node rotateLeft(Node node){
+        Node temp = node.right;
+        node.right = temp.left;
+        temp.left = node;
+        return temp;
     }
 
 
